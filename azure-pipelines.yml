@@ -28,7 +28,7 @@ steps:
   inputs:
     appType: 'webApp'
     appName: 'devops-site'
-    package: '$(Build.ArtifactStagingDirectory)'
+    package: '$(Build.ArtifactStagingDirectory)/drop'
     deploymentMethod: 'zipDeploy'
     publishProfilePath: '$(DownloadPublishProfile.secureFilePath)'
 
