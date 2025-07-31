@@ -26,9 +26,8 @@ steps:
 
 - task: AzureWebApp@1
   inputs:
-    azureSubscription: '<leave blank>'
     appType: 'webApp'
-    appName: 'devops-site' 
+    appName: 'devops-site'
     package: '$(Build.ArtifactStagingDirectory)'
     deploymentMethod: 'zipDeploy'
     publishProfilePath: '$(DownloadPublishProfile.secureFilePath)'
