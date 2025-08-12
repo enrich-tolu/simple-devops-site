@@ -1,5 +1,3 @@
-# pipeline for simple devops site 
-
 trigger:
 - main
 
@@ -7,38 +5,38 @@ pool:
   vmImage: ubuntu-latest
 
 steps:
+# 1️⃣ Download Secure File (publish profile, if needed)
 - task: DownloadSecureFile@1
   name: DownloadPublishProfile
   inputs:
     secureFile: 'devops-site-profile'  # must match the uploaded secure file name exactly
 
+# 2️⃣ Copy all site files to staging directory
 - task: CopyFiles@2
   inputs:
     SourceFolder: '$(Build.SourcesDirectory)'
-    Contents: '**/*.html'
-    TargetFolder: '$(Build.ArtifactStagingDirectory)'
+    Contents: '**/*'    # all files, not just .html
+    TargetFolder: '$(Build.ArtifactStagingDirectory)/site'
 
+# 3️⃣ Archive files into a zip for deployment
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: '$(Build.ArtifactStagingDirectory)/site'
+    includeRootFolder: false
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/drop/site.zip'
+    replaceExistingArchive: true
+
+# 4️⃣ Publish the build artifact
 - task: PublishBuildArtifacts@1
   inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)/drop'
     ArtifactName: 'drop'
 
-- task: DownloadBuildArtifacts@0
-  inputs:
-    buildType: 'current'
-    downloadType: 'single'
-    artifactName: 'drop'
-    downloadPath: '$(Build.ArtifactStagingDirectory)'
-
+# 5️⃣ Deploy to Azure Web App using zipDeploy
 - task: AzureWebApp@1
   inputs:
-    azureSubscription: 'MyAzureConnection' # service connection name
+    azureSubscription: 'MyAzureConnection' # Service connection name in Azure DevOps
     appName: 'devops-site'
-    package: '$(Build.ArtifactStagingDirectory)/drop/**/*.zip'
+    package: '$(Build.ArtifactStagingDirectory)/drop/site.zip'
     deploymentMethod: 'zipDeploy'
-
-
-
-
-
-
