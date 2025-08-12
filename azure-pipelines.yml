@@ -23,11 +23,18 @@ steps:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
     ArtifactName: 'drop'
 
+- task: DownloadBuildArtifacts@0
+  inputs:
+    buildType: 'current'
+    downloadType: 'single'
+    artifactName: 'drop'
+    downloadPath: '$(Build.ArtifactStagingDirectory)'
+
 - task: AzureWebApp@1
   inputs:
     azureSubscription: 'MyAzureConnection' # service connection name
     appName: 'devops-site'
-    package: '$(Build.ArtifactStagingDirectory)/drop'
+    package: '$(Build.ArtifactStagingDirectory)/drop/**/*.zip'
     deploymentMethod: 'zipDeploy'
 
 
