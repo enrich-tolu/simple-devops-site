@@ -4,9 +4,14 @@ trigger:
 - main
 
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: ubuntu-latest
 
 steps:
+- task: DownloadSecureFile@1
+  name: DownloadPublishProfile
+  inputs:
+    secureFile: 'your-profile-name.PublishSettings'  # must match the uploaded secure file name exactly
+
 - task: CopyFiles@2
   inputs:
     SourceFolder: '$(Build.SourcesDirectory)'
@@ -18,17 +23,12 @@ steps:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
     ArtifactName: 'drop'
 
-# Deploy to Azure Web App using publish profile
-- task: DownloadSecureFile@1
-  name: DownloadPublishProfile
-  inputs:
-    secureFile: 'devops-site-profile'  # Replace with your uploaded file name
-
 - task: AzureWebApp@1
   inputs:
-    appType: 'webApp'
-    appName: 'devops-site'
+    appType: webApp
+    appName: 'your-app-service-name'  # e.g. le-devops-site
     package: '$(Build.ArtifactStagingDirectory)/drop'
-    deploymentMethod: 'zipDeploy'
+    deploymentMethod: zipDeploy
     publishProfilePath: '$(DownloadPublishProfile.secureFilePath)'
+
 
