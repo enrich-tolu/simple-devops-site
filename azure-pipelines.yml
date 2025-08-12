@@ -10,7 +10,7 @@ steps:
 - task: DownloadSecureFile@1
   name: DownloadPublishProfile
   inputs:
-    secureFile: 'your-profile-name.PublishSettings'  # must match the uploaded secure file name exactly
+    secureFile: 'devops-site-profile'  # must match the uploaded secure file name exactly
 
 - task: CopyFiles@2
   inputs:
@@ -26,7 +26,7 @@ steps:
 - task: AzureWebApp@1
   inputs:
     appType: webApp
-    appName: 'your-app-service-name'  # e.g. le-devops-site
+    appName: 'devops-site'  # e.g. le-devops-site
     package: '$(Build.ArtifactStagingDirectory)/drop'
     deploymentMethod: zipDeploy
     publishProfilePath: '$(DownloadPublishProfile.secureFilePath)'
